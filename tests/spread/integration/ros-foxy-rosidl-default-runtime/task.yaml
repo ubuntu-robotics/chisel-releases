@@ -1,0 +1,19 @@
+summary: Integration tests for ros-foxy-rosidl-default-runtime
+
+execute: |
+  rootfs="$(install-slices ros-foxy-rosidl-default-runtime_libs)"
+
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/rosidl_default_runtime"
+
+  # The default typesupport libs it aggregates resolve.
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  for lib in "$rootfs"/opt/ros/foxy/lib/librosidl_typesupport_*.so; do
+    if chroot "$rootfs" "${loader#"$rootfs"}" \
+      --library-path /opt/ros/foxy/lib --list "${lib#"$rootfs"}" \
+      2>&1 | grep -Eiq "not found|error while loading"; then
+      echo "unresolved deps in $lib"; exit 1
+    fi
+  done

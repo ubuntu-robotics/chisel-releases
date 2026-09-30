@@ -1,0 +1,20 @@
+package: ros-foxy-rosidl-default-runtime
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  # Metapackage for the default runtime typesupport. Marker + the runtime
+  # rosidl/typesupport libs; python messages pull rosidl-generator-py
+  # themselves.
+  libs:
+    essential:
+      - ros-foxy-rosidl-runtime-c_libs
+      - ros-foxy-rosidl-typesupport-c_libs
+      - ros-foxy-rosidl-typesupport-cpp_libs
+      - ros-foxy-rosidl-typesupport-introspection-c_libs
+      - ros-foxy-rosidl-typesupport-introspection-cpp_libs
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rosidl_default_runtime:

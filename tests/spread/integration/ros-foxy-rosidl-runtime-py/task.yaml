@@ -1,0 +1,14 @@
+summary: Integration tests for ros-foxy-rosidl-runtime-py
+
+execute: |
+  rootfs="$(install-slices ros-foxy-rosidl-runtime-py_libs)"
+
+  # The python module imports under the sliced python3.8 (site-packages from
+  # /opt/ros/foxy is not on the default path, so add it).
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import rosidl_runtime_py"
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/rosidl_runtime_py"

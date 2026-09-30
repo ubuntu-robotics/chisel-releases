@@ -1,0 +1,16 @@
+package: ros-foxy-rosidl-typesupport-fastrtps-cpp
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - libstdc++6_libs
+    contents:
+      /opt/ros/foxy/lib/librosidl_typesupport_fastrtps_cpp.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rosidl_typesupport_fastrtps_cpp:
+      /opt/ros/foxy/share/ament_index/resource_index/rosidl_typesupport_cpp/rosidl_typesupport_fastrtps_cpp:

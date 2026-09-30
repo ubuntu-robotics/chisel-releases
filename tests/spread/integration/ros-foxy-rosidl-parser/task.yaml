@@ -1,0 +1,12 @@
+summary: Integration tests for ros-foxy-rosidl-parser
+
+execute: |
+  rootfs="$(install-slices ros-foxy-rosidl-parser_libs)"
+
+  # rosidl_parser imports under the sliced python3.8.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import rosidl_parser"
+
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/rosidl_parser"

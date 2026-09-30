@@ -1,0 +1,19 @@
+package: ros-foxy-rosidl-generator-py
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    # The other deb Depends serve the build-time generator; message python
+    # slices declare their own runtime deps.
+    essential:
+      - python3.8_standard
+      - ros-foxy-rpyutils_libs
+    # Runtime half only: generate_py_impl.py is the build-time generator.
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/rosidl_generator_py/__init__.py:
+      /opt/ros/foxy/lib/python3.8/site-packages/rosidl_generator_py/import_type_support_impl.py:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rosidl_generator_py:
