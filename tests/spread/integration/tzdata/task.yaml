@@ -1,0 +1,55 @@
+summary: Integration tests for tzdata
+
+execute: |
+  # tzdata_etc: the Etc slice ships the standard entries (UTC, GMT) without
+  # any regional database.
+  rootfs="$(install-slices tzdata_etc)"
+
+  test -f "${rootfs}/usr/share/zoneinfo/Etc/UTC"
+  test -f "${rootfs}/usr/share/zoneinfo/UTC"
+
+  # tzdata_zoneinfo: the aggregate slice ships the whole database; read a
+  # named zone through a consumer (date) to prove it is usable.
+  rootfs="$(install-slices tzdata_zoneinfo coreutils_bins)"
+
+  [[ "$(TZ=Europe/Paris chroot "$rootfs" date -d @0 +%Z)" == CET ]]
+
+  # Regional slices: each one alone ships a representative zone (in the
+  # plain, posix and right trees) as a TZif file. Several zones are relative
+  # symlinks into another region, so this also checks the essentials.
+  for pair in \
+    base:CET \
+    africa:Africa/Cairo \
+    america:America/New_York \
+    antarctica:Antarctica/Casey \
+    arctic:Arctic/Longyearbyen \
+    atlantic:Atlantic/Azores \
+    australia:Australia/Sydney \
+    brazil:Brazil/East \
+    canada:Canada/Eastern \
+    chile:Chile/Continental \
+    eurasia:Europe/Paris \
+    indian:Indian/Maldives \
+    mexico:Mexico/General \
+    pacific:Pacific/Auckland \
+    united-states:US/Pacific; do
+    slice="${pair%%:*}"
+    zone="${pair#*:}"
+    rootfs="$(install-slices "tzdata_${slice}")"
+    for tree in "" posix/ right/; do
+      test "$(head -c 4 "${rootfs}/usr/share/zoneinfo/${tree}${zone}")" = TZif
+    done
+  done
+
+  # tzdata_config: the zone tables.
+  rootfs="$(install-slices tzdata_config)"
+  grep -q "Europe/Paris" "${rootfs}/usr/share/zoneinfo/zone.tab"
+  grep -q "Europe/Paris" "${rootfs}/usr/share/zoneinfo/zone1970.tab"
+
+  # tzdata_zoneinfo-icu: the ICU resource bundles for both endiannesses.
+  rootfs="$(install-slices tzdata_zoneinfo-icu)"
+  for endian in be le; do
+    for res in metaZones timezoneTypes windowsZones zoneinfo64; do
+      test -s "${rootfs}/usr/share/zoneinfo-icu/44/${endian}/${res}.res"
+    done
+  done
