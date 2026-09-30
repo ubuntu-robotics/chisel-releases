@@ -1,0 +1,21 @@
+package: libpython3.8
+
+essential:
+  - libpython3.8_copyright
+
+slices:
+  # The shared Python 3.8 interpreter library, needed to embed Python or load
+  # its C extension modules (e.g. the ROS message __python.so libraries).
+  libs:
+    essential:
+      - libc6_libs
+      - libexpat1_libs
+      - zlib1g_libs
+    contents:
+      /usr/lib/*-linux-*/libpython3.8.so.1*:
+
+  copyright:
+    essential:
+      - libpython3.8-stdlib_copyright
+    contents:
+      /usr/share/doc/libpython3.8:
