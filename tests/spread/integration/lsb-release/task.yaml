@@ -1,0 +1,35 @@
+summary: Integration tests for lsb-release
+
+execute: |
+  # lsb-release_bins: fresh rootfs so a missing dep can't hide behind another
+  # test.
+  rootfs="$(install-slices lsb-release_bins)"
+
+  # The identification options work off /etc/lsb-release (base-files) and the
+  # distro-info-data tables, without dpkg-query (only -a/-v need it, see
+  # below). The script is exec'd directly, so its #!/usr/bin/python3 shebang
+  # must resolve.
+  chroot "$rootfs" /usr/bin/lsb_release -i | grep -Fiq "Ubuntu"
+  chroot "$rootfs" /usr/bin/lsb_release -r | grep -Fiq "20.04"
+  chroot "$rootfs" /usr/bin/lsb_release -c | grep -Fiq "focal"
+
+  # -a also lists LSB modules through dpkg-query (dpkg_bins). lsb_release
+  # sends dpkg-query's stderr to /dev/null, so that must exist. The modules
+  # line itself goes to stderr.
+  rootfs="$(install-slices lsb-release_bins dpkg_bins)"
+  mkdir -p "${rootfs}/dev"
+  touch "${rootfs}/dev/null"
+
+  out="$(chroot "$rootfs" /usr/bin/lsb_release -a 2>&1)"
+  grep -Fxq "No LSB modules are available." <<< "$out"
+  grep -Eq "^Distributor ID:\s+Ubuntu$" <<< "$out"
+  grep -Eq "^Release:\s+20\.04$" <<< "$out"
+  grep -Eq "^Codename:\s+focal$" <<< "$out"
+  chroot "$rootfs" /usr/bin/lsb_release -v 2>&1 | grep -Fxq "No LSB modules are available."
+
+  # lsb-release_libs: the python module reports the same identity.
+  rootfs="$(install-slices lsb-release_libs)"
+
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import lsb_release; print(lsb_release.get_distro_information()['ID'])" \
+    | grep -Fiq "Ubuntu"

@@ -1,0 +1,11 @@
+--2026-09-28 16:26:21--  http://archive.ubuntu.com/ubuntu/pool/main/d/distro-info-data/distro-info-data_0.43ubuntu1_all.deb
+Resolving archive.ubuntu.com (archive.ubuntu.com)... 91.189.92.23, 91.189.92.22, 91.189.91.82, ...
+Connecting to archive.ubuntu.com (archive.ubuntu.com)|91.189.92.23|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 4504 (4.4K) [application/vnd.debian.binary-package]
+Saving to: '/tmp/chisel-rootfs-review/tmp.mJ2awUIxJ1/distro-info-data_0.43ubuntu1_all.deb'
+
+     0K ....                                                  100%  361M=0s
+
+2026-09-28 16:26:21 (361 MB/s) - '/tmp/chisel-rootfs-review/tmp.mJ2awUIxJ1/distro-info-data_0.43ubuntu1_all.deb' saved [4504/4504]
+

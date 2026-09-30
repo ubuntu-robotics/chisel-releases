@@ -1,0 +1,60 @@
+package: dpkg
+
+essential:
+  - dpkg_copyright
+
+slices:
+  bins:
+    essential:
+      - diffutils_bins  # used by dpkg -i
+      - dpkg_config
+      - dpkg_tables
+      - dpkg_var
+      - libbz2-1.0_libs
+      - libc-bin_ldconfig
+      - libc6_libs
+      - liblzma5_libs
+      - libselinux1_libs
+      - libzstd1_libs
+      - tar_tar
+      - zlib1g_libs
+    contents:
+      /sbin/start-stop-daemon:
+      /usr/bin/dpkg:
+      /usr/bin/dpkg-deb:
+      /usr/bin/dpkg-divert:
+      /usr/bin/dpkg-maintscript-helper:
+      /usr/bin/dpkg-query:
+      /usr/bin/dpkg-split:
+      /usr/bin/dpkg-statoverride:
+      /usr/bin/dpkg-trigger:
+      /usr/bin/update-alternatives:
+
+  config:
+    contents:
+      /etc/dpkg/dpkg.cfg:
+      /etc/dpkg/dpkg.cfg.d/:
+
+  copyright:
+    contents:
+      /usr/share/doc/dpkg/copyright:
+
+  locales:
+    essential:
+      - dpkg_bins
+    contents:
+      /usr/share/locale/**/dpkg.mo:
+
+  tables:
+    contents:
+      /usr/share/dpkg/*table:
+
+  var:
+    # Directories that are included in the tarball because they need to exist in /var
+    # Focal's dpkg also needs /var/lib/dpkg/status to exist; it is not shipped
+    # here, create it (e.g. empty) before running dpkg --install.
+    contents:
+      /var/lib/dpkg/alternatives/:
+      /var/lib/dpkg/info/:
+      /var/lib/dpkg/parts/:
+      /var/lib/dpkg/updates/:

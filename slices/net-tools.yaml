@@ -1,0 +1,18 @@
+package: net-tools
+
+essential:
+  - net-tools_copyright
+
+slices:
+  bins:
+    essential:
+      - libc6_libs
+      - libselinux1_libs
+    contents:
+      /bin/netstat:
+      /sbin/ifconfig:
+      /sbin/route:
+
+  copyright:
+    contents:
+      /usr/share/doc/net-tools/copyright:

@@ -1,0 +1,19 @@
+summary: Integration tests for distro-info-data
+
+execute: |
+  # distro-info-data_data: fresh rootfs so a missing dep can't hide behind
+  # another test.
+  rootfs="$(install-slices distro-info-data_data)"
+
+  # The CSV tables exist and carry the focal series entry consumed by
+  # lsb_release and the distro-info tooling.
+  grep -Fq "20.04" "$rootfs/usr/share/distro-info/ubuntu.csv"
+  grep -Fiq "focal" "$rootfs/usr/share/distro-info/ubuntu.csv"
+
+  # Consumer: lsb_release builds its codename table from debian.csv at import
+  # time (the focal codename itself comes from /etc/lsb-release).
+  rootfs="$(install-slices lsb-release_bins)"
+  chroot "$rootfs" /usr/bin/lsb_release -c | grep -Fq "focal"
+  chroot "$rootfs" /usr/bin/python3 -c \
+    'import lsb_release; print(lsb_release.RELEASE_CODENAME_LOOKUP["10"])' \
+    | grep -Fxq "buster"

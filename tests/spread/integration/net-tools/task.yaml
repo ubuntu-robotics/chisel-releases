@@ -1,0 +1,22 @@
+summary: Integration tests for net-tools
+
+# Bind-mounts /proc into the chroot; needs an LXD container (docker is unprivileged).
+systems: [ubuntu-focal]
+
+execute: |
+  # net-tools_bins: fresh rootfs so a missing dep can't hide behind another
+  # test. Both tools read /proc, so it is bind-mounted into the chroot.
+  rootfs="$(install-slices net-tools_bins)"
+
+  mkdir -p "${rootfs}/proc"
+  mount --bind /proc "${rootfs}/proc"
+  trap 'umount "${rootfs}/proc"' EXIT
+
+  # ifconfig reports the loopback interface of the chroot.
+  chroot "$rootfs" /sbin/ifconfig lo | grep -Fiq "loopback"
+
+  # netstat prints its routing-table header.
+  chroot "$rootfs" /bin/netstat -rn | grep -Fiq "Kernel IP routing table"
+
+  # route prints the same kernel routing table.
+  chroot "$rootfs" /sbin/route -n | grep -Fiq "Kernel IP routing table"
