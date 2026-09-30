@@ -1,0 +1,15 @@
+package: ros-esm-config
+
+archive: ubuntu-esm-ros
+
+essential:
+  - ros-esm-config_copyright
+
+slices:
+  config:
+    contents:
+      /etc/xdg/rosdistro/config.yaml:
+
+  copyright:
+    contents:
+      /usr/share/doc/ros-esm-config/copyright:

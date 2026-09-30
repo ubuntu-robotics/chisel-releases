@@ -1,0 +1,13 @@
+summary: Integration tests for ros-esm-config
+
+execute: |
+  # ros-esm-config_config: fresh rootfs so a missing dep can't hide behind
+  # another test. Cut with a consumer that reads the configuration.
+  rootfs="$(install-slices ros-esm-config_config \
+    python3-rosdistro-modules_libs)"
+
+  # rosdistro resolves its index URL through the shipped config, not the
+  # built-in raw.githubusercontent.com default.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import rosdistro; print(rosdistro.get_index_url())" \
+    | grep -Fq "https://ros.robotics.ubuntu.com/"
