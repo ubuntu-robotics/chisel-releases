@@ -1,0 +1,20 @@
+summary: Integration tests for libicu66
+
+execute: |
+  rootfs="$(install-slices libicu66_libs)"
+
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+  for name in data i18n io test tu uc; do
+    lib="$(find "$rootfs"/usr/lib -name "libicu$name.so.66.*" -type f | head -1)"
+    test -n "$lib"
+    if chroot "$rootfs" "${loader#"$rootfs"}" \
+      --library-path "/usr/lib/$triplet" --list "${lib#"$rootfs"}" \
+      2>&1 | grep -Eiq "not found|error while loading"; then
+      echo "unresolved deps in $lib"; exit 1
+    fi
+  done
+
+  test -f "$rootfs"/usr/share/doc/libicu66/copyright

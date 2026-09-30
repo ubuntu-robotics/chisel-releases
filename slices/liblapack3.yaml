@@ -1,0 +1,43 @@
+package: liblapack3
+
+essential:
+  - liblapack3_copyright
+
+slices:
+  libs:
+    essential:
+      - libblas3_libs
+      - libc6_libs
+      - libgcc-s1_libs
+      - libgfortran5_libs
+    contents:
+      # Same update-alternatives wiring as libblas3 (see there).
+      /etc/alternatives/liblapack.so.3-aarch64-linux-gnu:
+        {symlink: /usr/lib/aarch64-linux-gnu/lapack/liblapack.so.3, arch: arm64}
+      /etc/alternatives/liblapack.so.3-arm-linux-gnueabihf:
+        {symlink: /usr/lib/arm-linux-gnueabihf/lapack/liblapack.so.3, arch: armhf}
+      /etc/alternatives/liblapack.so.3-i386-linux-gnu:
+        {symlink: /usr/lib/i386-linux-gnu/lapack/liblapack.so.3, arch: i386}
+      /etc/alternatives/liblapack.so.3-powerpc64le-linux-gnu:
+        {symlink: /usr/lib/powerpc64le-linux-gnu/lapack/liblapack.so.3, arch: ppc64el}
+      /etc/alternatives/liblapack.so.3-s390x-linux-gnu:
+        {symlink: /usr/lib/s390x-linux-gnu/lapack/liblapack.so.3, arch: s390x}
+      /etc/alternatives/liblapack.so.3-x86_64-linux-gnu:
+        {symlink: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3, arch: amd64}
+      /usr/lib/*-linux-*/lapack/liblapack.so.3*:
+      /usr/lib/aarch64-linux-gnu/liblapack.so.3:
+        {symlink: /etc/alternatives/liblapack.so.3-aarch64-linux-gnu, arch: arm64}
+      /usr/lib/arm-linux-gnueabihf/liblapack.so.3:
+        {symlink: /etc/alternatives/liblapack.so.3-arm-linux-gnueabihf, arch: armhf}
+      /usr/lib/i386-linux-gnu/liblapack.so.3:
+        {symlink: /etc/alternatives/liblapack.so.3-i386-linux-gnu, arch: i386}
+      /usr/lib/powerpc64le-linux-gnu/liblapack.so.3:
+        {symlink: /etc/alternatives/liblapack.so.3-powerpc64le-linux-gnu, arch: ppc64el}
+      /usr/lib/s390x-linux-gnu/liblapack.so.3:
+        {symlink: /etc/alternatives/liblapack.so.3-s390x-linux-gnu, arch: s390x}
+      /usr/lib/x86_64-linux-gnu/liblapack.so.3:
+        {symlink: /etc/alternatives/liblapack.so.3-x86_64-linux-gnu, arch: amd64}
+
+  copyright:
+    contents:
+      /usr/share/doc/liblapack3/copyright:

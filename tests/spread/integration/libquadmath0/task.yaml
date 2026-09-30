@@ -1,0 +1,17 @@
+summary: Integration tests for libquadmath0
+
+execute: |
+  rootfs="$(install-slices libquadmath0_libs)"
+
+  lib="$(find "$rootfs"/usr/lib -name 'libquadmath.so.*' -type f)"
+  test -n "$lib"
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  if chroot "$rootfs" "${loader#"$rootfs"}" --list "${lib#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $lib"; exit 1
+  fi
+
+  # The doc dir is a symlink to gcc-10-base; the copyright must resolve.
+  test -f "$rootfs"/usr/share/doc/libquadmath0/copyright
