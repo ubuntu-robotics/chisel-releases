@@ -165,7 +165,10 @@ slices:
       - libpython3.8-stdlib_core
       - libpython3.8-stdlib_osx-support
     contents:
-      /usr/lib/python3.8/distutils/**:
+      # The rest of distutils ships in python3-distutils; a glob here would
+      # conflict with it.
+      /usr/lib/python3.8/distutils/__init__.py:
+      /usr/lib/python3.8/distutils/version.py:
       /usr/lib/python3.8/venv/**:
       /usr/lib/python3.8/zipapp.py:
 
@@ -388,3 +391,10 @@ slices:
       /usr/lib/python3.8/antigravity.py:
       /usr/lib/python3.8/formatter.py:
       /usr/lib/python3.8/this.py:
+
+  # /usr/share/doc/libpython3.8-stdlib is a symlink to libpython3.8-minimal.
+  copyright:
+    essential:
+      - libpython3.8-minimal_copyright
+    contents:
+      /usr/share/doc/libpython3.8-stdlib:
