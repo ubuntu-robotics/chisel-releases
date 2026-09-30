@@ -1,0 +1,22 @@
+summary: Integration tests for libc-bin
+
+execute: |
+  # nsswitch: the config is copied into /etc.
+  rootfs="$(install-slices libc-bin_nsswitch)"
+  grep -Eq '^passwd:[[:space:]]+files' "$rootfs"/etc/nsswitch.conf
+
+  # ldconfig: builds the cache from ld.so.conf and its conf.d includes.
+  rootfs="$(install-slices libc-bin_ldconfig libc6_libs)"
+  test ! -e "$rootfs"/etc/ld.so.cache
+  chroot "$rootfs" /sbin/ldconfig
+  test -f "$rootfs"/etc/ld.so.cache
+  chroot "$rootfs" /sbin/ldconfig -p | grep -Fq libc.so.6
+
+  # locale: C.UTF-8 is not built into focal's glibc, so setlocale needs the
+  # shipped locale files.
+  rootfs="$(install-slices libc-bin_locale python3.8_standard)"
+  LANG=C.UTF-8 chroot "$rootfs" /usr/bin/python3.8 -c \
+    'import locale; locale.setlocale(locale.LC_ALL, ""); print(locale.getlocale())' \
+    | grep -Fq UTF-8
+
+  test -f "$rootfs"/usr/share/doc/libc-bin/copyright
