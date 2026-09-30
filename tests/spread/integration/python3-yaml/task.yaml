@@ -1,0 +1,11 @@
+summary: Integration tests for python3-yaml
+
+execute: |
+  # python3-yaml_libs: fresh rootfs so a missing dep can't hide behind another
+  # test.
+  rootfs="$(install-slices python3-yaml_libs)"
+
+  # The module imports and parses YAML, exercising the libyaml C extension,
+  # inside the sliced rootfs.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import yaml; print(yaml.safe_load('a: 1')['a'])" | grep -Fiq "1"

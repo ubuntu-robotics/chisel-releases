@@ -1,0 +1,23 @@
+summary: Integration tests for ros-foxy-pluginlib
+
+execute: |
+  # Header-only in Foxy; no library. Verify the marker and that its runtime
+  # deps (class-loader chain) resolve.
+  rootfs="$(install-slices ros-foxy-pluginlib_libs)"
+
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/pluginlib"
+
+  # class_loader is pulled in via essentials and must resolve.
+  lib="$(find "$rootfs"/opt/ros/foxy/lib -name 'libclass_loader.so' -type f)"
+  test -n "$lib"
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+  if chroot "$rootfs" "${loader#"$rootfs"}" \
+    --library-path "/opt/ros/foxy/lib:/opt/ros/foxy/lib/$triplet" \
+    --list "${lib#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $lib"; exit 1
+  fi

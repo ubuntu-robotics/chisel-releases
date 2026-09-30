@@ -1,0 +1,30 @@
+package: lsb-release
+
+essential:
+  - lsb-release_copyright
+
+slices:
+  bins:
+    # -a/-v list LSB modules via dpkg-query and crash without it. dpkg is
+    # Essential so it is not declared here; add dpkg_bins for those options.
+    essential:
+      - lsb-release_libs
+      - python3-minimal_python3
+      - python3.8_standard
+    contents:
+      /usr/bin/lsb_release:
+
+  libs:
+    essential:
+      # get_distro_information() reads /etc/lsb-release, else shells out to
+      # apt-cache. lsb_release.py reads the distro-info csv at import time.
+      - base-files_release-info
+      - distro-info-data_data
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/lsb_release.py:
+      /usr/share/pyshared/lsb_release.py:
+
+  copyright:
+    contents:
+      /usr/share/doc/lsb-release/copyright:

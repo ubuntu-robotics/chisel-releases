@@ -1,0 +1,22 @@
+package: ros-foxy-osrf-pycommon
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  # python3-mock (deb Depends) is dropped: it is never imported.
+  libs:
+    essential:
+      # Not in the deb Depends: cli_utils/verb_pattern.py imports pkg_resources.
+      - python3-pkg-resources_libs
+      # requires.txt names setuptools: pkg_resources.require() needs its egg-info.
+      - python3-setuptools_libs
+      - python3.8_standard
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/osrf_pycommon-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/osrf_pycommon-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/osrf_pycommon/:
+      /opt/ros/foxy/lib/python3.8/site-packages/osrf_pycommon/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/osrf_pycommon:

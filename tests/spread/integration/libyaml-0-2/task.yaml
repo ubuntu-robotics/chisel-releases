@@ -1,0 +1,22 @@
+summary: Integration tests for libyaml-0-2
+
+execute: |
+  # libyaml-0-2_libs: fresh rootfs so a missing dep can't hide behind another
+  # test.
+  rootfs="$(install-slices libyaml-0-2_libs)"
+
+  # The library is present and a valid ELF shared object.
+  lib="$(find "$rootfs"/usr/lib -name 'libyaml-0.so.*' -type f)"
+  test -n "$lib"
+  file "$lib" | grep -Fiq "ELF"
+  file "$lib" | grep -Fiq "shared object"
+
+  # The dynamic linker resolves all of the library's dependencies within the
+  # sliced rootfs: a "not found" line means a missing essential dependency.
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  if chroot "$rootfs" "${loader#"$rootfs"}" --list "${lib#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $lib"; exit 1
+  fi

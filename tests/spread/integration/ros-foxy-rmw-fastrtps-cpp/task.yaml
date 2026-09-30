@@ -1,0 +1,27 @@
+summary: Integration tests for ros-foxy-rmw-fastrtps-cpp
+
+execute: |
+  rootfs="$(install-slices ros-foxy-rmw-fastrtps-cpp_libs)"
+
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+
+  # Every shipped library resolves all its deps inside the slice closure.
+  libs="$(find "$rootfs"/opt/ros/foxy/lib -maxdepth 1 -name 'lib*.so*' -type f)"
+  test -n "$libs"
+  for lib in $libs; do
+    if chroot "$rootfs" "${loader#"$rootfs"}" \
+      --library-path /opt/ros/foxy/lib --list "${lib#"$rootfs"}" \
+      2>&1 | grep -Eiq "not found|error while loading"; then
+      echo "unresolved deps in $lib"; exit 1
+    fi
+  done
+
+  # ament markers: package prefix + rmw registration (rmw_implementation
+  # finds this RMW by scanning the rmw_typesupport* resource types).
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/rmw_fastrtps_cpp"
+  test -f "$index/rmw_typesupport/rmw_fastrtps_cpp"
+  test -f "$index/rmw_typesupport_c/rmw_fastrtps_cpp"
+  test -f "$index/rmw_typesupport_cpp/rmw_fastrtps_cpp"

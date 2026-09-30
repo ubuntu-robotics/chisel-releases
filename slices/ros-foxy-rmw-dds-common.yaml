@@ -1,0 +1,49 @@
+package: ros-foxy-rmw-dds-common
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  interfaces:
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rmw_dds_common:
+      /opt/ros/foxy/share/ament_index/resource_index/rosidl_interfaces/rmw_dds_common:
+      /opt/ros/foxy/share/rmw_dds_common/msg/*:
+
+  libs:
+    essential:
+      - libc6_libs
+      - libgcc-s1_libs
+      - libstdc++6_libs
+      - ros-foxy-fastcdr_libs
+      - ros-foxy-rcutils_libs
+      - ros-foxy-rmw_libs
+      - ros-foxy-rosidl-runtime-c_libs
+      - ros-foxy-rosidl-typesupport-c_libs
+      - ros-foxy-rosidl-typesupport-cpp_libs
+      - ros-foxy-rosidl-typesupport-fastrtps-c_libs
+      - ros-foxy-rosidl-typesupport-fastrtps-cpp_libs
+      - ros-foxy-rosidl-typesupport-introspection-c_libs
+      - ros-foxy-rosidl-typesupport-introspection-cpp_libs
+    contents:
+      /opt/ros/foxy/lib/librmw_dds_common.so:
+      /opt/ros/foxy/lib/librmw_dds_common__rosidl_*.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rmw_dds_common:
+
+  python:
+    essential:
+      - libc6_libs
+      - libpython3.8_libs
+      - python3-numpy_libs
+      - python3.8_standard
+      - ros-foxy-rmw-dds-common_libs
+      - ros-foxy-rosidl-generator-py_libs
+      - ros-foxy-rosidl-parser_libs
+      - ros-foxy-rosidl-runtime-c_libs
+    contents:
+      /opt/ros/foxy/lib/librmw_dds_common__python.so:
+      /opt/ros/foxy/lib/python3.8/site-packages/rmw_dds_common/:
+      /opt/ros/foxy/lib/python3.8/site-packages/rmw_dds_common/**.py:
+      /opt/ros/foxy/lib/python3.8/site-packages/rmw_dds_common/**.so:

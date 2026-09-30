@@ -1,0 +1,25 @@
+package: python3-catkin-pkg-modules
+
+archive: ubuntu-esm-ros
+
+essential:
+  - python3-catkin-pkg-modules_copyright
+
+slices:
+  # python3-dateutil/docutils (deb Depends) and packaging are dropped: only the
+  # changelog tooling imports them. requires.txt is left out since it lists them.
+  libs:
+    essential:
+      - python3-pyparsing_libs
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/catkin_pkg/:
+      /usr/lib/python3/dist-packages/catkin_pkg/**:
+      /usr/lib/python3/dist-packages/catkin_pkg_modules-*.egg-info/:
+      /usr/lib/python3/dist-packages/catkin_pkg_modules-*.egg-info/PKG-INFO:
+      /usr/lib/python3/dist-packages/catkin_pkg_modules-*.egg-info/dependency_links.txt:
+      /usr/lib/python3/dist-packages/catkin_pkg_modules-*.egg-info/top_level.txt:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-catkin-pkg-modules/copyright:

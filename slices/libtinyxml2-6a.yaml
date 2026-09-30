@@ -1,0 +1,17 @@
+package: libtinyxml2-6a
+
+essential:
+  - libtinyxml2-6a_copyright
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - libgcc-s1_libs
+      - libstdc++6_libs
+    contents:
+      /usr/lib/*-linux-*/libtinyxml2.so.6*:
+
+  copyright:
+    contents:
+      /usr/share/doc/libtinyxml2-6a/copyright:

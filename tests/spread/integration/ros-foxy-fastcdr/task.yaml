@@ -1,0 +1,22 @@
+summary: Integration tests for ros-foxy-fastcdr
+
+execute: |
+  rootfs="$(install-slices ros-foxy-fastcdr_libs)"
+
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+
+  # Every shipped library resolves all its deps inside the slice closure.
+  libs="$(find "$rootfs"/opt/ros/foxy/lib -maxdepth 1 -name 'lib*.so*' -type f)"
+  test -n "$libs"
+  for lib in $libs; do
+    if chroot "$rootfs" "${loader#"$rootfs"}" \
+      --list "${lib#"$rootfs"}" \
+      2>&1 | grep -Eiq "not found|error while loading"; then
+      echo "unresolved deps in $lib"; exit 1
+    fi
+  done
+
+  # The global copyright slice ships the deb's LICENSE.
+  test -f "$rootfs"/opt/ros/foxy/share/fastcdr/LICENSE

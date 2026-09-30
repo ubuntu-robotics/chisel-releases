@@ -1,0 +1,10 @@
+summary: Integration tests for python3-minimal
+
+execute: |
+  # python3-minimal_python3: /usr/bin/python3 is the interpreter that every
+  # "#!/usr/bin/python3" entry point execs.
+  rootfs="$(install-slices python3-minimal_python3)"
+
+  test -L "$rootfs"/usr/bin/python3
+  chroot "$rootfs" /usr/bin/python3 -c 'import sys; print(sys.version)' \
+    | grep -Fq "3.8"

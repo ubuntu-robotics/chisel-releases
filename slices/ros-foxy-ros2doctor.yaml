@@ -1,0 +1,29 @@
+package: ros-foxy-ros2doctor
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3-catkin-pkg-modules_libs
+      - python3-ifcfg_libs
+      # Not in the deb Depends: api/package.py imports packaging.version.
+      - python3-packaging_libs
+      # Not in the deb Depends: api/__init__.py imports pkg_resources.
+      - python3-pkg-resources_libs
+      - python3-rosdistro-modules_libs
+      - python3.8_standard
+      - ros-foxy-ament-index-python_libs
+      - ros-foxy-rclpy_libs
+      - ros-foxy-ros2cli_libs
+      # Not in the deb Depends: `ros2 doctor hello` publishes std_msgs/String.
+      - ros-foxy-std-msgs_python
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2doctor-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2doctor-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2doctor/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2doctor/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/ros2doctor:

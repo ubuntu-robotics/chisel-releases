@@ -1,0 +1,19 @@
+package: ros-foxy-ament-index-python
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      # requires.txt names setuptools: pkg_resources.require() needs its egg-info.
+      - python3-setuptools_libs
+      - python3.8_standard
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/ament_index_python-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ament_index_python-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/ament_index_python/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ament_index_python/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/ament_index_python:

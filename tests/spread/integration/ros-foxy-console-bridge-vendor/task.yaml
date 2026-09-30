@@ -1,0 +1,26 @@
+summary: Integration tests for ros-foxy-console-bridge-vendor
+
+execute: |
+  rootfs="$(install-slices ros-foxy-console-bridge-vendor_libs)"
+
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+
+  # The vendored lib lives in a multiarch subdir of /opt/ros/foxy/lib, so the
+  # loader needs both paths.
+  libs="$(find "$rootfs"/opt/ros/foxy/lib -name 'lib*.so*' -type f)"
+  test -n "$libs"
+  for lib in $libs; do
+    if chroot "$rootfs" "${loader#"$rootfs"}" \
+      --library-path "/opt/ros/foxy/lib:/opt/ros/foxy/lib/$triplet" \
+      --list "${lib#"$rootfs"}" \
+      2>&1 | grep -Eiq "not found|error while loading"; then
+      echo "unresolved deps in $lib"; exit 1
+    fi
+  done
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/console_bridge_vendor"

@@ -1,0 +1,16 @@
+package: python3-evalidate
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/evalidate-*.egg-info/:
+      /usr/lib/python3/dist-packages/evalidate-*.egg-info/*:
+      /usr/lib/python3/dist-packages/evalidate/:
+      /usr/lib/python3/dist-packages/evalidate/*:

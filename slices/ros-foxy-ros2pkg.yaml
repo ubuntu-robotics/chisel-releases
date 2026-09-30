@@ -1,0 +1,23 @@
+package: ros-foxy-ros2pkg
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  # python3-empy (deb Depends) is dropped: only `ros2 pkg create` scaffolding uses it.
+  libs:
+    essential:
+      - python3-catkin-pkg-modules_libs
+      - python3-defusedxml_libs
+      - python3-pkg-resources_libs
+      - python3.8_standard
+      - ros-foxy-ament-index-python_libs
+      - ros-foxy-ros2cli_libs
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2pkg-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2pkg-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2pkg/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2pkg/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/ros2pkg:

@@ -1,0 +1,17 @@
+summary: Integration tests for libpython3.8
+
+execute: |
+  rootfs="$(install-slices libpython3.8_libs)"
+
+  lib="$(find "$rootfs"/usr/lib -name 'libpython3.8.so.1*' -type f)"
+  test -n "$lib"
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  if chroot "$rootfs" "${loader#"$rootfs"}" --list "${lib#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $lib"; exit 1
+  fi
+
+  # The doc dir symlinks through libpython3.8-stdlib to libpython3.8-minimal.
+  test -f "$rootfs"/usr/share/doc/libpython3.8/copyright

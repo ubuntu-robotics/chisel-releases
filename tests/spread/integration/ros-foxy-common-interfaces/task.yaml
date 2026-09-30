@@ -1,0 +1,59 @@
+summary: Integration tests for ros-foxy-common-interfaces
+
+execute: |
+  # Metapackage: no libs of its own; verify the marker and that the
+  # aggregated message packages' libs resolve.
+  rootfs="$(install-slices ros-foxy-common-interfaces_libs)"
+
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/common_interfaces"
+
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+
+  # Spot-check one lib from an aggregated package (nav-msgs) resolves.
+  libs="$(find "$rootfs"/opt/ros/foxy/lib -maxdepth 1 -name 'lib*.so*' -type f)"
+  test -n "$libs"
+  for lib in $libs; do
+    if chroot "$rootfs" "${loader#"$rootfs"}" \
+      --library-path /opt/ros/foxy/lib --list "${lib#"$rootfs"}" \
+      2>&1 | grep -Eiq "not found|error while loading"; then
+      echo "unresolved deps in $lib"; exit 1
+    fi
+  done
+
+  # python: one message per aggregated package imports, loads its C
+  # typesupport extension and instantiates.
+  rootfs="$(install-slices ros-foxy-common-interfaces_python)"
+  LD_LIBRARY_PATH=/opt/ros/foxy/lib \
+  PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages \
+    chroot "$rootfs" /usr/bin/python3.8 -c "
+  import importlib
+  pairs = [('actionlib_msgs.msg', 'GoalID'), ('builtin_interfaces.msg', 'Time'),
+           ('diagnostic_msgs.msg', 'KeyValue'), ('geometry_msgs.msg', 'Point'),
+           ('nav_msgs.msg', 'Odometry'), ('sensor_msgs.msg', 'Imu'),
+           ('shape_msgs.msg', 'SolidPrimitive'), ('std_msgs.msg', 'String'),
+           ('std_srvs.srv', 'Empty'), ('stereo_msgs.msg', 'DisparityImage'),
+           ('trajectory_msgs.msg', 'JointTrajectory'),
+           ('visualization_msgs.msg', 'Marker')]
+  for mod, name in pairs:
+      cls = getattr(importlib.import_module(mod), name)
+      cls.__class__.__import_type_support__()
+      if mod.endswith('.msg'):
+          cls()
+  print('ok', len(pairs))
+  " | grep -Fxq 'ok 12'
+
+  # interfaces: every aggregated package's definitions are indexed and shipped.
+  rootfs="$(install-slices ros-foxy-common-interfaces_interfaces)"
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/common_interfaces"
+  pkgs="$(ls "$index/rosidl_interfaces")"
+  [[ "$(wc -w <<< "$pkgs")" == 12 ]]
+  for pkg in $pkgs; do
+    test -f "$index/packages/$pkg"
+    for def in $(cat "$index/rosidl_interfaces/$pkg"); do
+      test -f "$rootfs/opt/ros/foxy/share/$pkg/$def" || exit 1
+    done
+  done

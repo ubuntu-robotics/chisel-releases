@@ -1,0 +1,9 @@
+summary: Integration tests for python3-distutils
+
+execute: |
+  rootfs="$(install-slices python3-distutils_libs)"
+
+  # The full distutils package (not just the libpython3.8-stdlib stub) imports.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import distutils.core, distutils.command.build_py, distutils.util; print(distutils.util.convert_path('a/b'))" \
+    | grep -Fxq "a/b"

@@ -1,0 +1,24 @@
+summary: Integration tests for python3-numpy
+
+execute: |
+  rootfs="$(install-slices python3-numpy_libs)"
+
+  # numpy imports and links its BLAS/LAPACK backends inside the slice closure.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import numpy; numpy.arange(4).dot(numpy.arange(4)); print(numpy.__version__)"
+
+  # The compiled _multiarray_umath extension resolves its C deps.
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  so="$(find "$rootfs" -name '_multiarray_umath*.so' -type f | head -1)"
+  test -n "$so"
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+  if chroot "$rootfs" "${loader#"$rootfs"}" \
+    --library-path "/usr/lib/$triplet/blas:/usr/lib/$triplet/lapack" \
+    --list "${so#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $so"; exit 1
+  fi
+
+  test -f "$rootfs"/usr/share/doc/python3-numpy/copyright

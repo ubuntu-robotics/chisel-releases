@@ -1,0 +1,25 @@
+package: python3-rosdistro-modules
+
+archive: ubuntu-esm-ros
+
+essential:
+  - python3-rosdistro-modules_copyright
+
+slices:
+  libs:
+    essential:
+      - ca-certificates_data
+      - python3-catkin-pkg-modules_libs
+      - python3-rospkg-modules_libs
+      - python3-yaml_libs
+      - python3.8_standard
+      - ros-esm-config_config
+    contents:
+      /usr/lib/python3/dist-packages/rosdistro/:
+      /usr/lib/python3/dist-packages/rosdistro/**:
+      /usr/lib/python3/dist-packages/rosdistro_modules-*.egg-info/:
+      /usr/lib/python3/dist-packages/rosdistro_modules-*.egg-info/*:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-rosdistro-modules/copyright:

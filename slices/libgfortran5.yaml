@@ -1,0 +1,23 @@
+package: libgfortran5
+
+archive: ubuntu-esm-infra
+
+essential:
+  - libgfortran5_copyright
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - libgcc-s1_libs
+    # libquadmath0 is only built (and linked) on these architectures.
+    v3-essential:
+      libquadmath0_libs: {arch: [amd64, i386, ppc64el]}
+    contents:
+      /usr/lib/*-linux-*/libgfortran.so.5*:
+
+  copyright:
+    essential:
+      - gcc-10-base_copyright
+    contents:
+      /usr/share/doc/libgfortran5:

@@ -1,0 +1,13 @@
+summary: Integration tests for ros-foxy-launch
+
+execute: |
+  rootfs="$(install-slices ros-foxy-launch_libs)"
+
+  # The python module imports under the sliced python3.8.
+  AMENT_PREFIX_PATH=/opt/ros/foxy chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import launch"
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/launch"

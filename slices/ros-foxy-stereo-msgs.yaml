@@ -1,0 +1,48 @@
+package: ros-foxy-stereo-msgs
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  interfaces:
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/stereo_msgs:
+      /opt/ros/foxy/share/ament_index/resource_index/rosidl_interfaces/stereo_msgs:
+      /opt/ros/foxy/share/stereo_msgs/msg/*:
+
+  libs:
+    essential:
+      - libc6_libs
+      - libgcc-s1_libs
+      - libstdc++6_libs
+      - ros-foxy-fastcdr_libs
+      - ros-foxy-rosidl-runtime-c_libs
+      - ros-foxy-rosidl-typesupport-c_libs
+      - ros-foxy-rosidl-typesupport-cpp_libs
+      - ros-foxy-rosidl-typesupport-fastrtps-c_libs
+      - ros-foxy-rosidl-typesupport-fastrtps-cpp_libs
+      - ros-foxy-rosidl-typesupport-introspection-c_libs
+      - ros-foxy-rosidl-typesupport-introspection-cpp_libs
+      - ros-foxy-sensor-msgs_libs
+      - ros-foxy-std-msgs_libs
+    contents:
+      /opt/ros/foxy/lib/libstereo_msgs__rosidl_*.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/stereo_msgs:
+
+  python:
+    essential:
+      - libc6_libs
+      - libpython3.8_libs
+      - python3.8_standard
+      - ros-foxy-rosidl-generator-py_libs
+      - ros-foxy-rosidl-parser_libs
+      - ros-foxy-sensor-msgs_python
+      - ros-foxy-std-msgs_python
+      - ros-foxy-stereo-msgs_libs
+    contents:
+      /opt/ros/foxy/lib/libstereo_msgs__python.so:
+      /opt/ros/foxy/lib/python3.8/site-packages/stereo_msgs/:
+      /opt/ros/foxy/lib/python3.8/site-packages/stereo_msgs/**.py:
+      /opt/ros/foxy/lib/python3.8/site-packages/stereo_msgs/**.so:

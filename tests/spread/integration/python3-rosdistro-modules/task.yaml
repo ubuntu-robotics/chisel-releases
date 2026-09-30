@@ -1,0 +1,13 @@
+summary: Integration tests for python3-rosdistro-modules
+
+execute: |
+  # python3-rosdistro-modules_libs: fresh rootfs so a missing dep can't hide
+  # behind another test.
+  rootfs="$(install-slices python3-rosdistro-modules_libs)"
+
+  # The module imports fully (including its manifest_provider subpackage) and
+  # resolves the rosdistro index URL from the ros-esm-config configuration
+  # (not the built-in raw.githubusercontent.com default).
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import rosdistro; print(rosdistro.get_index_url())" \
+    | grep -Fq "https://ros.robotics.ubuntu.com/"

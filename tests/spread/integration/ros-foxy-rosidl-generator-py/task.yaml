@@ -1,0 +1,16 @@
+summary: Integration tests for ros-foxy-rosidl-generator-py
+
+execute: |
+  rootfs="$(install-slices ros-foxy-rosidl-generator-py_libs)"
+
+  # The python module imports under the sliced python3.8 (site-packages from
+  # /opt/ros/foxy is not on the default path, so add it). Only the runtime
+  # import_type_support is exported; the build-time generator isn't shipped.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import rosidl_generator_py; \
+     assert rosidl_generator_py.__all__ == ['import_type_support']"
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/rosidl_generator_py"

@@ -1,0 +1,28 @@
+package: ros-foxy-rmw-fastrtps-cpp
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - libgcc-s1_libs
+      - libstdc++6_libs
+      - ros-foxy-fastcdr_libs
+      - ros-foxy-fastrtps_libs
+      - ros-foxy-rcutils_libs
+      - ros-foxy-rmw-dds-common_libs
+      - ros-foxy-rmw-fastrtps-shared-cpp_libs
+      - ros-foxy-rmw_libs
+      - ros-foxy-rosidl-runtime-c_libs
+      - ros-foxy-rosidl-typesupport-fastrtps-c_libs
+      - ros-foxy-rosidl-typesupport-fastrtps-cpp_libs
+    contents:
+      /opt/ros/foxy/lib/librmw_fastrtps_cpp.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rmw_fastrtps_cpp:
+      /opt/ros/foxy/share/ament_index/resource_index/rmw_typesupport/rmw_fastrtps_cpp:
+      /opt/ros/foxy/share/ament_index/resource_index/rmw_typesupport_c/rmw_fastrtps_cpp:
+      /opt/ros/foxy/share/ament_index/resource_index/rmw_typesupport_cpp/rmw_fastrtps_cpp:

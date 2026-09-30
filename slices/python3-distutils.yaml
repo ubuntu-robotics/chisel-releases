@@ -1,0 +1,43 @@
+package: python3-distutils
+
+essential:
+  - python3-distutils_copyright
+
+slices:
+  libs:
+    essential:
+      # python3-lib2to3 is dropped: distutils and setuptools only import it
+      # lazily, for the 2to3 build helpers.
+      - python3.8_standard
+    contents:
+      /usr/lib/python3.8/distutils/_msvccompiler.py:
+      /usr/lib/python3.8/distutils/archive_util.py:
+      /usr/lib/python3.8/distutils/bcppcompiler.py:
+      /usr/lib/python3.8/distutils/ccompiler.py:
+      /usr/lib/python3.8/distutils/cmd.py:
+      /usr/lib/python3.8/distutils/command/**:
+      /usr/lib/python3.8/distutils/config.py:
+      /usr/lib/python3.8/distutils/core.py:
+      /usr/lib/python3.8/distutils/cygwinccompiler.py:
+      /usr/lib/python3.8/distutils/debug.py:
+      /usr/lib/python3.8/distutils/dep_util.py:
+      /usr/lib/python3.8/distutils/dir_util.py:
+      /usr/lib/python3.8/distutils/dist.py:
+      /usr/lib/python3.8/distutils/errors.py:
+      /usr/lib/python3.8/distutils/extension.py:
+      /usr/lib/python3.8/distutils/fancy_getopt.py:
+      /usr/lib/python3.8/distutils/file_util.py:
+      /usr/lib/python3.8/distutils/filelist.py:
+      /usr/lib/python3.8/distutils/log.py:
+      /usr/lib/python3.8/distutils/msvc9compiler.py:
+      /usr/lib/python3.8/distutils/msvccompiler.py:
+      /usr/lib/python3.8/distutils/spawn.py:
+      /usr/lib/python3.8/distutils/sysconfig.py:
+      /usr/lib/python3.8/distutils/text_file.py:
+      /usr/lib/python3.8/distutils/unixccompiler.py:
+      /usr/lib/python3.8/distutils/util.py:
+      /usr/lib/python3.8/distutils/versionpredicate.py:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-distutils/copyright:

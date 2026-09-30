@@ -1,0 +1,22 @@
+summary: Integration tests for dpkg
+
+execute: |
+  # Chisel a minimum number of slices to give us a runnable system that we can
+  # test in.
+  rootfs="$(install-slices coreutils_bins diffutils_bins dpkg_bins)"
+
+  # Get a sample deb file to install. Contains no dependencies or install
+  # scripts. Pinned to the focal release pocket, which never changes.
+  wget -P "${rootfs}/" http://archive.ubuntu.com/ubuntu/pool/main/d/distro-info-data/distro-info-data_0.43ubuntu1_all.deb
+
+  # Focal's dpkg (1.19) refuses to run without a status database, unlike the
+  # 1.21+ in later releases which treats a missing one as empty.
+  touch "${rootfs}/var/lib/dpkg/status"
+
+  # Run a smoke test for dpkg to ensure that it does not throw an error
+  chroot "${rootfs}/" dpkg --install ./distro-info-data_0.43ubuntu1_all.deb
+
+  # The package is recorded in the status database and its files are on disk.
+  chroot "${rootfs}/" dpkg-query -W -f '${Status} ${Version}\n' distro-info-data \
+    | grep -Fxq "install ok installed 0.43ubuntu1"
+  test -f "${rootfs}/usr/share/distro-info/ubuntu.csv"

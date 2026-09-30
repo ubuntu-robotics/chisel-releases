@@ -1,0 +1,13 @@
+summary: Integration tests for python3-rospkg-modules
+
+execute: |
+  # python3-rospkg-modules_libs: fresh rootfs so a missing dep can't hide
+  # behind another test. OsDetect needs /dev/null inside the chroot.
+  rootfs="$(install-slices python3-rospkg-modules_libs)"
+
+  mkdir -p "${rootfs}/dev"
+  touch "${rootfs}/dev/null"
+
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "from rospkg.os_detect import OsDetect; print(OsDetect().get_codename())" \
+    | grep -Fiq "focal"

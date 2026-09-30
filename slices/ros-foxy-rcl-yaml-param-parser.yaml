@@ -1,0 +1,16 @@
+package: ros-foxy-rcl-yaml-param-parser
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - ros-foxy-libyaml-vendor_libs
+      - ros-foxy-rcutils_libs
+    contents:
+      /opt/ros/foxy/lib/librcl_yaml_param_parser.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rcl_yaml_param_parser:

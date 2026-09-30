@@ -1,0 +1,31 @@
+package: ros-foxy-launch-ros
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      # ldconfig + the ROS ld.so.conf.d entry so dlopen'd ROS libs (e.g.
+      # librclpy_common.so via the rclpy C extension) resolve without
+      # LD_LIBRARY_PATH. Run `ldconfig` once in the rootfs to take effect.
+      - libc-bin_ldconfig
+      # requires.txt names setuptools: pkg_resources.require() needs its egg-info.
+      - python3-setuptools_libs
+      - python3-yaml_libs
+      - python3.8_standard
+      - ros-foxy-ament-index-python_libs
+      - ros-foxy-composition-interfaces_python
+      - ros-foxy-launch_libs
+      - ros-foxy-lifecycle-msgs_python
+      - ros-foxy-osrf-pycommon_libs
+      - ros-foxy-rclpy_libs
+      - ros-foxy-ros-workspace_setup
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch_ros-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch_ros-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch_ros/:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch_ros/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/launch_ros:

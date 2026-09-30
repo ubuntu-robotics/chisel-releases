@@ -1,0 +1,17 @@
+package: ros-foxy-rpyutils
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3.8_standard
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/rpyutils-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/rpyutils-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/rpyutils/:
+      /opt/ros/foxy/lib/python3.8/site-packages/rpyutils/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rpyutils:

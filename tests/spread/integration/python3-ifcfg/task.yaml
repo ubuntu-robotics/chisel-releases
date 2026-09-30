@@ -1,0 +1,9 @@
+summary: Integration tests for python3-ifcfg
+
+execute: |
+  # python3-ifcfg_libs: fresh rootfs so a missing dep can't hide behind
+  # another test.
+  rootfs="$(install-slices python3-ifcfg_libs)"
+
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import ifcfg; assert 'lo' in ifcfg.interfaces()"

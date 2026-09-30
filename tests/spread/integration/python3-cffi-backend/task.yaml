@@ -1,0 +1,9 @@
+summary: Integration tests for python3-cffi-backend
+
+execute: |
+  rootfs="$(install-slices python3-cffi-backend_libs)"
+
+  # The package imports cleanly under the sliced python3.8.
+  chroot "$rootfs" /usr/bin/python3.8 -c "import _cffi_backend"
+
+  test -f "$rootfs"/usr/share/doc/python3-cffi-backend/copyright

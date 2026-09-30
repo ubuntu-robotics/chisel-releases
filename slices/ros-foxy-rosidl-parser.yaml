@@ -1,0 +1,19 @@
+package: ros-foxy-rosidl-parser
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  # Ships a runtime python module (rosidl_parser) imported by
+  # rosidl_runtime_py at runtime. ros-foxy-rosidl-adapter (deb Depends) is a
+  # build-time converter that nothing imports, so it is dropped.
+  libs:
+    essential:
+      - python3-lark_libs
+      - python3.8_standard
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/rosidl_parser/:
+      /opt/ros/foxy/lib/python3.8/site-packages/rosidl_parser/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rosidl_parser:

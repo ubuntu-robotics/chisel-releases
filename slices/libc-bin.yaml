@@ -23,6 +23,23 @@ slices:
       /usr/lib/locale/C.UTF-8/LC_TELEPHONE:
       /usr/lib/locale/C.UTF-8/LC_TIME:
 
+  # The dynamic-linker configuration and cache tool. Needed so python dlopen'd
+  # C extensions can resolve ROS libraries under /opt/ros/*/lib without relying
+  # on LD_LIBRARY_PATH. libc6_config already ships the conf.d multiarch entry;
+  # this adds the top-level ld.so.conf that includes it, plus ldconfig.
+  # NOTE: chisel cannot run ldconfig at cut time (mutate is Starlark, no exec),
+  # so a consumer must run `ldconfig` once in the rootfs (or `ldconfig -r`) to
+  # generate /etc/ld.so.cache before the conf.d entries take effect.
+  ldconfig:
+    essential:
+      # ldconfig is a /bin/sh wrapper around ldconfig.real, so it needs a shell.
+      - dash_bins
+      - libc6_config
+    contents:
+      /etc/ld.so.conf:
+      /sbin/ldconfig:
+      /sbin/ldconfig.real:
+
   copyright:
     contents:
       /usr/share/doc/libc-bin/copyright:

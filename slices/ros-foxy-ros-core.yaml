@@ -1,0 +1,51 @@
+package: ros-foxy-ros-core
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  # Aggregator for the ROS 2 core runtime. DEVIATION from the deb: ros-core's
+  # Depends includes the ament-cmake/gtest/lint/generator build chain and the
+  # launch-testing packages, which are deliberately trimmed here (chisel slices
+  # have no Recommends; a runtime rootfs must not ship build or test tooling).
+  # Only runtime slices are essentials.
+  core:
+    essential:
+      - ros-foxy-ament-index-cpp_libs
+      - ros-foxy-ament-index-python_libs
+      - ros-foxy-class-loader_libs
+      # The standard message packages, both their C libs and python bindings.
+      - ros-foxy-common-interfaces_libs
+      - ros-foxy-common-interfaces_python
+      - ros-foxy-launch-ros_libs
+      - ros-foxy-launch-xml_libs
+      - ros-foxy-launch-yaml_libs
+      - ros-foxy-launch_libs
+      - ros-foxy-pluginlib_libs
+      - ros-foxy-rcl-lifecycle_libs
+      - ros-foxy-rclcpp-lifecycle_libs
+      - ros-foxy-rclcpp_libs
+      - ros-foxy-rclpy_libs
+      - ros-foxy-ros-environment_libs
+      - ros-foxy-ros-workspace_setup
+      - ros-foxy-ros2action_libs
+      - ros-foxy-ros2cli_bins
+      - ros-foxy-ros2cli_libs
+      - ros-foxy-ros2component_libs
+      - ros-foxy-ros2doctor_libs
+      - ros-foxy-ros2interface_libs
+      - ros-foxy-ros2launch_libs
+      - ros-foxy-ros2lifecycle_libs
+      - ros-foxy-ros2multicast_libs
+      - ros-foxy-ros2node_libs
+      - ros-foxy-ros2param_libs
+      - ros-foxy-ros2pkg_libs
+      - ros-foxy-ros2run_libs
+      - ros-foxy-ros2service_libs
+      - ros-foxy-ros2topic_libs
+      - ros-foxy-rosidl-default-runtime_libs
+      - ros-foxy-sros2_libs
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/ros_core:

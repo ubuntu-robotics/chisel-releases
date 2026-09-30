@@ -1,0 +1,15 @@
+package: ros-foxy-rosidl-typesupport-introspection-c
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+    contents:
+      /opt/ros/foxy/lib/librosidl_typesupport_introspection_c.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rosidl_typesupport_introspection_c:
+      /opt/ros/foxy/share/ament_index/resource_index/rosidl_typesupport_c/rosidl_typesupport_introspection_c:

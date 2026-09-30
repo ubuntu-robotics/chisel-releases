@@ -1,0 +1,10 @@
+summary: Integration tests for python3-setuptools
+
+execute: |
+  rootfs="$(install-slices python3-setuptools_libs)"
+
+  # setuptools imports, and pkg_resources resolves its distribution through
+  # the shipped egg-info (the ROS entry points require it).
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import setuptools, pkg_resources; print(pkg_resources.get_distribution('setuptools').version == setuptools.__version__)" \
+    | grep -Fxq "True"

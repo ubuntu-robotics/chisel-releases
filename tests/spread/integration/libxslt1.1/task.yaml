@@ -1,0 +1,20 @@
+summary: Integration tests for libxslt1.1
+
+execute: |
+  rootfs="$(install-slices libxslt1.1_libs)"
+
+  libs="$(find "$rootfs"/usr/lib -name 'lib*xslt.so.*' -type f)"
+  test "$(echo "$libs" | wc -l)" -eq 2  # libxslt + libexslt
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+  for lib in $libs; do
+    if chroot "$rootfs" "${loader#"$rootfs"}" \
+      --library-path "/usr/lib/$triplet" --list "${lib#"$rootfs"}" \
+      2>&1 | grep -Eiq "not found|error while loading"; then
+      echo "unresolved deps in $lib"; exit 1
+    fi
+  done
+
+  test -f "$rootfs"/usr/share/doc/libxslt1.1/copyright

@@ -1,0 +1,18 @@
+summary: Integration tests for liblapack3
+
+execute: |
+  rootfs="$(install-slices liblapack3_libs)"
+
+  lib="$(find "$rootfs"/usr/lib -name 'liblapack.so.*' -type f)"
+  test -n "$lib"
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+  # liblapack and its libblas dep live in lapack//blas/ subdirs.
+  if chroot "$rootfs" "${loader#"$rootfs"}" \
+    --library-path "/usr/lib/$triplet/lapack:/usr/lib/$triplet/blas" \
+    --list "${lib#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $lib"; exit 1
+  fi

@@ -1,0 +1,28 @@
+summary: Integration tests for ros-foxy-rclpy
+
+execute: |
+  rootfs="$(install-slices ros-foxy-rclpy_libs)"
+
+  # rclpy imports under the sliced python3.8, pulling the message packages'
+  # python modules (rcl_interfaces.msg, etc.) transitively.
+  AMENT_PREFIX_PATH=/opt/ros/foxy chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import rclpy"
+
+  # librclpy_common and the C extension modules resolve their deps.
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  lib="$rootfs/opt/ros/foxy/lib/librclpy_common.so"
+  test -f "$lib"
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+  if chroot "$rootfs" "${loader#"$rootfs"}" \
+    --library-path "/opt/ros/foxy/lib:/usr/lib/$triplet" \
+    --list "${lib#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $lib"; exit 1
+  fi
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/rclpy"

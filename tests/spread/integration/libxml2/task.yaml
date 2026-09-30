@@ -1,0 +1,18 @@
+summary: Integration tests for libxml2
+
+execute: |
+  rootfs="$(install-slices libxml2_libs)"
+
+  lib="$(find "$rootfs"/usr/lib -name 'libxml2.so.*' -type f | head -1)"
+  test -n "$lib"
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+  if chroot "$rootfs" "${loader#"$rootfs"}" \
+    --library-path "/usr/lib/$triplet" --list "${lib#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $lib"; exit 1
+  fi
+
+  test -f "$rootfs"/usr/share/doc/libxml2/copyright

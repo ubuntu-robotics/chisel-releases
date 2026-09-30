@@ -1,0 +1,18 @@
+package: python3-netifaces
+
+essential:
+  - python3-netifaces_copyright
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/netifaces-*.egg-info/:
+      /usr/lib/python3/dist-packages/netifaces-*.egg-info/*:
+      /usr/lib/python3/dist-packages/netifaces.cpython-*.so:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-netifaces/copyright:

@@ -1,0 +1,8 @@
+summary: Integration tests for ros-foxy-ros-environment
+
+execute: |
+  # Marker-only package in Foxy; no library.
+  rootfs="$(install-slices ros-foxy-ros-environment_libs)"
+
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/ros_environment"

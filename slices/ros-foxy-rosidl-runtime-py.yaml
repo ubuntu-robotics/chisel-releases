@@ -1,0 +1,21 @@
+package: ros-foxy-rosidl-runtime-py
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3-numpy_libs
+      - python3-yaml_libs
+      - python3.8_standard
+      - ros-foxy-ament-index-python_libs
+      - ros-foxy-rosidl-parser_libs
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/rosidl_runtime_py-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/rosidl_runtime_py-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/rosidl_runtime_py/:
+      /opt/ros/foxy/lib/python3.8/site-packages/rosidl_runtime_py/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rosidl_runtime_py:

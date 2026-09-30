@@ -1,0 +1,18 @@
+package: ros-foxy-rcl-lifecycle
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - ros-foxy-lifecycle-msgs_libs
+      - ros-foxy-rcl_libs
+      - ros-foxy-rcutils_libs
+      - ros-foxy-rosidl-runtime-c_libs
+    contents:
+      /opt/ros/foxy/lib/librcl_lifecycle.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rcl_lifecycle:

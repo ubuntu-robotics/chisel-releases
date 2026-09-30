@@ -1,0 +1,22 @@
+package: ros-foxy-ros2lifecycle
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3.8_standard
+      - ros-foxy-lifecycle-msgs_python
+      - ros-foxy-rclpy_libs
+      - ros-foxy-ros2cli_libs
+      - ros-foxy-ros2node_libs
+      - ros-foxy-ros2service_libs
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2lifecycle-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2lifecycle-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2lifecycle/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2lifecycle/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/ros2lifecycle:

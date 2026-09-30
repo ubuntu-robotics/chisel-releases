@@ -1,0 +1,64 @@
+package: ros-foxy-common-interfaces
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  # The definitions of the aggregated message packages, for `ros2 interface`.
+  interfaces:
+    essential:
+      - ros-foxy-actionlib-msgs_interfaces
+      - ros-foxy-builtin-interfaces_interfaces
+      - ros-foxy-diagnostic-msgs_interfaces
+      - ros-foxy-geometry-msgs_interfaces
+      - ros-foxy-nav-msgs_interfaces
+      - ros-foxy-sensor-msgs_interfaces
+      - ros-foxy-shape-msgs_interfaces
+      - ros-foxy-std-msgs_interfaces
+      - ros-foxy-std-srvs_interfaces
+      - ros-foxy-stereo-msgs_interfaces
+      - ros-foxy-trajectory-msgs_interfaces
+      - ros-foxy-visualization-msgs_interfaces
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/common_interfaces:
+
+  # Metapackage aggregating the standard message packages. Ships only its
+  # ament marker; the message libs come from the essential slices.
+  libs:
+    essential:
+      - ros-foxy-actionlib-msgs_libs
+      - ros-foxy-builtin-interfaces_libs
+      - ros-foxy-diagnostic-msgs_libs
+      - ros-foxy-geometry-msgs_libs
+      - ros-foxy-nav-msgs_libs
+      - ros-foxy-sensor-msgs_libs
+      - ros-foxy-shape-msgs_libs
+      - ros-foxy-std-msgs_libs
+      - ros-foxy-std-srvs_libs
+      - ros-foxy-stereo-msgs_libs
+      - ros-foxy-trajectory-msgs_libs
+      - ros-foxy-visualization-msgs_libs
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/common_interfaces:
+
+  # The python bindings of the aggregated message packages (chains each
+  # member's `python` slice, which pulls its `libs` too).
+  python:
+    essential:
+      - ros-foxy-actionlib-msgs_python
+      - ros-foxy-builtin-interfaces_python
+      - ros-foxy-diagnostic-msgs_python
+      - ros-foxy-geometry-msgs_python
+      - ros-foxy-nav-msgs_python
+      - ros-foxy-rosidl-runtime-py_libs
+      - ros-foxy-sensor-msgs_python
+      - ros-foxy-shape-msgs_python
+      - ros-foxy-std-msgs_python
+      - ros-foxy-std-srvs_python
+      - ros-foxy-stereo-msgs_python
+      - ros-foxy-trajectory-msgs_python
+      - ros-foxy-visualization-msgs_python
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/common_interfaces:

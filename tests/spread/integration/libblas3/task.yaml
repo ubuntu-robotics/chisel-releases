@@ -1,0 +1,17 @@
+summary: Integration tests for libblas3
+
+execute: |
+  rootfs="$(install-slices libblas3_libs)"
+
+  lib="$(find "$rootfs"/usr/lib -name 'libblas.so.*' -type f)"
+  test -n "$lib"
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+  # libblas lives in a blas/ subdir, not on the default search path.
+  if chroot "$rootfs" "${loader#"$rootfs"}" \
+    --library-path "/usr/lib/$triplet/blas" --list "${lib#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $lib"; exit 1
+  fi

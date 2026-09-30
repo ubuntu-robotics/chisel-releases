@@ -1,0 +1,20 @@
+summary: Integration tests for ros-foxy-ros-workspace
+
+execute: |
+  rootfs="$(install-slices ros-foxy-ros-workspace_setup)"
+
+  # The workspace anchor scripts and ament marker are present.
+  test -f "$rootfs"/opt/ros/foxy/setup.sh
+  test -f "$rootfs"/opt/ros/foxy/local_setup.sh
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/ros_workspace"
+
+  # The copyright slice is pulled in by the global essential.
+  test -f "$rootfs"/usr/share/doc/ros-foxy-ros-workspace/copyright
+
+  # The conf.d entry puts /opt/ros/foxy/lib on the loader path once ldconfig
+  # has run. Cut a ROS library alongside so there is something to index.
+  rootfs="$(install-slices ros-foxy-ros-workspace_setup ros-foxy-rcutils_libs)"
+  grep -Fxq /opt/ros/foxy/lib "$rootfs"/etc/ld.so.conf.d/00-ros-foxy.conf
+  chroot "$rootfs" /sbin/ldconfig
+  chroot "$rootfs" /sbin/ldconfig -p | grep -Fq /opt/ros/foxy/lib/librcutils.so

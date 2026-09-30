@@ -1,0 +1,13 @@
+package: ros-foxy-ros-environment
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  # ros_environment is marker-only in Foxy (no library). Ships the ament
+  # marker so get_package_prefix() and rosversion lookups find it.
+  libs:
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/ros_environment:

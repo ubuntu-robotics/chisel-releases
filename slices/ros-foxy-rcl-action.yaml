@@ -1,0 +1,18 @@
+package: ros-foxy-rcl-action
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - ros-foxy-action-msgs_libs
+      - ros-foxy-rcl_libs
+      - ros-foxy-rcutils_libs
+      - ros-foxy-rmw_libs
+    contents:
+      /opt/ros/foxy/lib/librcl_action.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rcl_action:

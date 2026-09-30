@@ -1,0 +1,29 @@
+package: ros-foxy-sros2
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3-cryptography_libs
+      - python3-lxml_libs
+      # Not in the deb Depends: policy/__init__.py imports pkg_resources.
+      - python3-pkg-resources_libs
+      # requires.txt names setuptools: pkg_resources.require() needs its egg-info.
+      - python3-setuptools_libs
+      - python3.8_standard
+      - ros-foxy-ament-index-python_libs
+      - ros-foxy-rclpy_libs
+      - ros-foxy-ros2cli_libs
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/sros2-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/sros2-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/sros2/:
+      /opt/ros/foxy/lib/python3.8/site-packages/sros2/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/sros2:
+      # Offline XML catalog; sros2/__init__.py points XML_CATALOG_FILES here.
+      /opt/ros/foxy/share/sros2/xml_cache/xhtml-cache.xml:
+      /opt/ros/foxy/share/sros2/xml_cache/xml.xsd:
