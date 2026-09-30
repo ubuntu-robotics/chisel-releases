@@ -1,0 +1,20 @@
+package: ros-foxy-fastcdr
+
+archive: ubuntu-esm-ros
+
+essential:
+  - ros-foxy-fastcdr_copyright
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - libgcc-s1_libs
+      - libstdc++6_libs
+    contents:
+      /opt/ros/foxy/lib/libfastcdr.so.1*:
+
+  # The deb's only legal file; it has no /usr/share/doc copyright.
+  copyright:
+    contents:
+      /opt/ros/foxy/share/fastcdr/LICENSE:
