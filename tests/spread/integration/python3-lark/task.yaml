@@ -1,0 +1,10 @@
+summary: Integration tests for python3-lark
+
+execute: |
+  # python3-lark_libs: fresh rootfs so a missing dep can't hide behind another
+  # test.
+  rootfs="$(install-slices python3-lark_libs)"
+
+  # The module imports and parses a trivial grammar inside the sliced rootfs.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "from lark import Lark; Lark('start: \"hello\"', parser='lalr')"

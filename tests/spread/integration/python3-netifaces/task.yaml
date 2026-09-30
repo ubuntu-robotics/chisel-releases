@@ -1,0 +1,11 @@
+summary: Integration tests for python3-netifaces
+
+execute: |
+  # python3-netifaces_libs: fresh rootfs so a missing dep can't hide behind
+  # another test.
+  rootfs="$(install-slices python3-netifaces_libs)"
+
+  # The module imports and lists interfaces inside the sliced rootfs; every
+  # system has a loopback interface.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import netifaces; assert 'lo' in netifaces.interfaces()"

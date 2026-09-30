@@ -1,0 +1,10 @@
+summary: Integration tests for python3-pkg-resources
+
+execute: |
+  rootfs="$(install-slices python3-pkg-resources_libs)"
+
+  # The package imports cleanly under the sliced python3.8.
+  chroot "$rootfs" /usr/bin/python3.8 -c "import pkg_resources"
+
+  # The copyright slice is pulled in by the global essential.
+  test -f "$rootfs"/usr/share/doc/python3-pkg-resources/copyright

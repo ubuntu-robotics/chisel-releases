@@ -1,0 +1,23 @@
+package: python3-ifcfg
+
+archive: ubuntu-esm-ros
+
+essential:
+  - python3-ifcfg_copyright
+
+slices:
+  libs:
+    essential:
+      # ifcfg runs ifconfig via Popen(shell=True), i.e. /bin/sh.
+      - dash_bins
+      - net-tools_bins
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/ifcfg-*.egg-info/:
+      /usr/lib/python3/dist-packages/ifcfg-*.egg-info/*:
+      /usr/lib/python3/dist-packages/ifcfg/:
+      /usr/lib/python3/dist-packages/ifcfg/*:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-ifcfg/copyright:

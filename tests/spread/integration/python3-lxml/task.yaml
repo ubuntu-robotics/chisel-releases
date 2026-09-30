@@ -1,0 +1,20 @@
+summary: Integration tests for python3-lxml
+
+execute: |
+  rootfs="$(install-slices python3-lxml_libs)"
+
+  # The package imports cleanly under the sliced python3.8.
+  chroot "$rootfs" /usr/bin/python3.8 -c "import lxml"
+
+  # lxml.etree loads libxml2/libxslt/libexslt; run an XSLT transform.
+  chroot "$rootfs" /usr/bin/python3.8 - <<'EOF'
+  from lxml import etree
+  xsl = etree.XSLT(etree.XML(
+      '<xsl:stylesheet version="1.0"'
+      ' xmlns:xsl="http://www.w3.org/1999/XSL/Transform">'
+      '<xsl:template match="/"><o><xsl:value-of select="/a"/></o>'
+      '</xsl:template></xsl:stylesheet>'))
+  assert str(xsl(etree.XML("<a>hi</a>"))).strip().endswith("<o>hi</o>")
+  EOF
+
+  test -f "$rootfs"/usr/share/doc/python3-lxml/copyright

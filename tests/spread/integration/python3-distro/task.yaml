@@ -1,0 +1,22 @@
+summary: Integration tests for python3-distro
+
+execute: |
+  # python3-distro_libs: fresh rootfs so a missing dep can't hide behind
+  # another test.
+  rootfs="$(install-slices python3-distro_libs)"
+
+  # The module identifies the distribution from the sliced rootfs data.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import distro; print(distro.id(), distro.codename())" \
+    | grep -Fiq "ubuntu focal"
+
+  # linux_distribution() also runs `lsb_release -a` (lsb-release_bins, which
+  # calls dpkg-query) with stderr sent to /dev/null inside the chroot.
+  mkdir -p "${rootfs}/dev"
+  touch "${rootfs}/dev/null"
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import distro; print(distro.linux_distribution())" \
+    | grep -Fq "20.04"
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import distro; print(distro.lsb_release_attr('codename'))" \
+    | grep -Fxq "focal"

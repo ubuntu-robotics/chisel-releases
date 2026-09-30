@@ -1,0 +1,20 @@
+package: python3-distro
+
+essential:
+  - python3-distro_copyright
+
+slices:
+  libs:
+    essential:
+      # `lsb_release -a` runs dpkg-query; distro doesn't catch its exit 1.
+      - dpkg_bins
+      - lsb-release_bins
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/distro-*.egg-info/:
+      /usr/lib/python3/dist-packages/distro-*.egg-info/*:
+      /usr/lib/python3/dist-packages/distro.py:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-distro/copyright:

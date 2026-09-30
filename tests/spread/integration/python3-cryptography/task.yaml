@@ -1,0 +1,19 @@
+summary: Integration tests for python3-cryptography
+
+execute: |
+  rootfs="$(install-slices python3-cryptography_libs)"
+
+  # The package imports cleanly under the sliced python3.8.
+  chroot "$rootfs" /usr/bin/python3.8 -c "import cryptography"
+
+  # ECDSA sign/verify loads the _openssl binding (libssl/libcrypto).
+  chroot "$rootfs" /usr/bin/python3.8 - <<'EOF'
+  from cryptography.hazmat.backends import default_backend
+  from cryptography.hazmat.primitives import hashes
+  from cryptography.hazmat.primitives.asymmetric import ec
+  key = ec.generate_private_key(ec.SECP256R1(), default_backend())
+  sig = key.sign(b"chisel", ec.ECDSA(hashes.SHA256()))
+  key.public_key().verify(sig, b"chisel", ec.ECDSA(hashes.SHA256()))
+  EOF
+
+  test -f "$rootfs"/usr/share/doc/python3-cryptography/copyright

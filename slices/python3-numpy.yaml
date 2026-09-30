@@ -1,0 +1,22 @@
+package: python3-numpy
+
+essential:
+  - python3-numpy_copyright
+
+slices:
+  libs:
+    essential:
+      - libblas3_libs
+      - libc6_libs
+      - liblapack3_libs
+      # python3-pkg-resources (deb Depends) is dropped: only f2py3, not shipped, uses it.
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/numpy-*.egg-info/:
+      /usr/lib/python3/dist-packages/numpy-*.egg-info/*:
+      /usr/lib/python3/dist-packages/numpy/:
+      /usr/lib/python3/dist-packages/numpy/**:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-numpy/copyright:

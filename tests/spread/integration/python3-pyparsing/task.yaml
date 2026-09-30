@@ -1,0 +1,10 @@
+summary: Integration tests for python3-pyparsing
+
+execute: |
+  # python3-pyparsing_libs: fresh rootfs so a missing dep can't hide behind
+  # another test.
+  rootfs="$(install-slices python3-pyparsing_libs)"
+
+  # The module imports and reports its version inside the sliced rootfs.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import pyparsing; print(pyparsing.__version__)" | grep -Fiq "2.4"

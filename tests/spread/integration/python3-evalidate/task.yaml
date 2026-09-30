@@ -1,0 +1,12 @@
+summary: Integration tests for python3-evalidate
+
+execute: |
+  # python3-evalidate_libs: fresh rootfs so a missing dep can't hide behind
+  # another test.
+  rootfs="$(install-slices python3-evalidate_libs)"
+
+  # The safe evaluator computes an expression inside the sliced rootfs. The
+  # default model allows Add but not Mult.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "from evalidate import Expr; print(Expr('40 + 2').eval())" \
+    | grep -Fxq "42"

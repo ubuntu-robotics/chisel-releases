@@ -1,0 +1,20 @@
+summary: Integration tests for python3-packaging
+
+execute: |
+  rootfs="$(install-slices python3-packaging_libs)"
+
+  # Version parsing/comparison, as ros2doctor uses it.
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "from packaging import version; \
+     assert version.parse('1.10') > version.parse('1.9')"
+
+  # Every public module imports: requirements (pyparsing, six) and tags
+  # (distutils).
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import packaging.requirements, packaging.tags; \
+     r = packaging.requirements.Requirement('foo>=1.0'); \
+     assert str(r.specifier) == '>=1.0'; \
+     assert next(iter(packaging.tags.sys_tags()))"
+
+  # The copyright slice is pulled in by the global essential.
+  test -f "$rootfs"/usr/share/doc/python3-packaging/copyright

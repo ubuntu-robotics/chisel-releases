@@ -1,0 +1,17 @@
+summary: Integration tests for python3-catkin-pkg-modules
+
+execute: |
+  # python3-catkin-pkg-modules_libs: fresh rootfs so a missing dep can't hide
+  # behind another test.
+  rootfs="$(install-slices python3-catkin-pkg-modules_libs)"
+
+  # Parse a package.xml inside the sliced rootfs, as ros2pkg and rosdistro do.
+  mkdir -p "${rootfs}/tmp"
+  pkg='<package><name>foo</name><version>1.0.0</version>'
+  pkg="$pkg"'<description>d</description>'
+  pkg="$pkg"'<maintainer email="a@b.cd">x</maintainer>'
+  pkg="$pkg"'<license>MIT</license></package>'
+  echo "$pkg" > "${rootfs}/tmp/pkg.xml"
+  chroot "$rootfs" /usr/bin/python3.8 -c \
+    "from catkin_pkg.package import parse_package; print(parse_package('/tmp/pkg.xml').name)" \
+    | grep -Fq "foo"

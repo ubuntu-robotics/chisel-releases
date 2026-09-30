@@ -1,0 +1,22 @@
+package: python3-setuptools
+
+essential:
+  - python3-setuptools_copyright
+
+slices:
+  libs:
+    essential:
+      - python3-distutils_libs
+      - python3-pkg-resources_libs
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/setuptools-*.egg-info/:
+      /usr/lib/python3/dist-packages/setuptools-*.egg-info/*:
+      /usr/lib/python3/dist-packages/setuptools/:
+      # Skip the Windows launcher .exe stubs and their manifest.
+      /usr/lib/python3/dist-packages/setuptools/**.py:
+      /usr/lib/python3/dist-packages/setuptools/*.tmpl:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-setuptools/copyright:

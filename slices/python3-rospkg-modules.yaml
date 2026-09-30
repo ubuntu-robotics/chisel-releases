@@ -1,0 +1,20 @@
+package: python3-rospkg-modules
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3-catkin-pkg-modules_libs
+      # Also brings lsb-release (deb Depends); rospkg only uses it via distro.
+      - python3-distro_libs
+      - python3-yaml_libs
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/rospkg/:
+      /usr/lib/python3/dist-packages/rospkg/*:
+      /usr/lib/python3/dist-packages/rospkg_modules-*.egg-info/:
+      /usr/lib/python3/dist-packages/rospkg_modules-*.egg-info/*:

@@ -1,0 +1,22 @@
+package: python3-packaging
+
+essential:
+  - python3-packaging_copyright
+
+slices:
+  libs:
+    essential:
+      # Not in the deb Depends: tags.py imports distutils.util.
+      - python3-distutils_libs
+      - python3-pyparsing_libs
+      - python3-six_libs
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/packaging-*.egg-info/:
+      /usr/lib/python3/dist-packages/packaging-*.egg-info/*:
+      /usr/lib/python3/dist-packages/packaging/:
+      /usr/lib/python3/dist-packages/packaging/**:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-packaging/copyright:

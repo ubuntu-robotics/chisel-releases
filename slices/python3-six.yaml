@@ -1,0 +1,17 @@
+package: python3-six
+
+essential:
+  - python3-six_copyright
+
+slices:
+  libs:
+    essential:
+      - python3.8_standard
+    contents:
+      /usr/lib/python3/dist-packages/six-*.egg-info/:
+      /usr/lib/python3/dist-packages/six-*.egg-info/*:
+      /usr/lib/python3/dist-packages/six.py:
+
+  copyright:
+    contents:
+      /usr/share/doc/python3-six/copyright:
