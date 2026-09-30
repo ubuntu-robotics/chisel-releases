@@ -1,0 +1,28 @@
+package: ros-foxy-ros2cli
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3-netifaces_libs
+      - python3-pkg-resources_libs
+      - python3.8_standard
+      - ros-foxy-rclpy_libs
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2cli-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2cli-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2cli/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2cli/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/ros2cli:
+
+  bins:
+    essential:
+      - python3-minimal_python3
+      - ros-foxy-ros2cli_libs
+    contents:
+      /opt/ros/foxy/bin/_ros2_daemon:
+      /opt/ros/foxy/bin/ros2:

@@ -1,0 +1,22 @@
+summary: Integration tests for ros-foxy-ros2doctor
+
+execute: |
+  rootfs="$(install-slices ros-foxy-ros2doctor_libs)"
+
+  # The python module imports under the sliced python3.8, including the
+  # package check (packaging) and the hello verb (std_msgs, rclpy).
+  AMENT_PREFIX_PATH=/opt/ros/foxy LD_LIBRARY_PATH=/opt/ros/foxy/lib \
+    chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import ros2doctor, ros2doctor.api.package, ros2doctor.verb.hello"
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/ros2doctor"
+
+  # The verb registers through its egg-info entry point and runs under ros2.
+  rootfs="$(install-slices ros-foxy-ros2doctor_libs ros-foxy-ros2cli_bins)"
+  ros_env="AMENT_PREFIX_PATH=/opt/ros/foxy LD_LIBRARY_PATH=/opt/ros/foxy/lib"
+  ros_env="$ros_env PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages"
+  env $ros_env chroot "$rootfs" /opt/ros/foxy/bin/ros2 doctor --help \
+    | grep -Fq "usage: ros2 doctor"

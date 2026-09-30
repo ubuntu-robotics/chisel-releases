@@ -1,0 +1,18 @@
+package: ros-foxy-ros2node
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3.8_standard
+      - ros-foxy-ros2cli_libs
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2node-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2node-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2node/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2node/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/ros2node:

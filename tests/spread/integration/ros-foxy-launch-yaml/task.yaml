@@ -1,0 +1,25 @@
+summary: Integration tests for ros-foxy-launch-yaml
+
+execute: |
+  rootfs="$(install-slices ros-foxy-launch-yaml_libs)"
+
+  # The python module imports under the sliced python3.8.
+  AMENT_PREFIX_PATH=/opt/ros/foxy chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import launch_yaml"
+
+  # The frontend registers through its egg-info entry point and parses a file.
+  mkdir -p "$rootfs"/tmp
+  printf 'launch:\n- arg:\n    name: a\n    default: "1"\n' > "$rootfs"/tmp/t.launch.yaml
+  AMENT_PREFIX_PATH=/opt/ros/foxy \
+  PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages \
+    chroot "$rootfs" /usr/bin/python3.8 -c "
+  from launch.frontend import Parser
+  root, parser = Parser.load('/tmp/t.launch.yaml')
+  ld = parser.parse_description(root)
+  print(type(ld).__name__, len(ld.entities))
+  " | grep -Fxq 'LaunchDescription 1'
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/launch_yaml"

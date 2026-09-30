@@ -1,0 +1,28 @@
+package: ros-foxy-launch
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3-evalidate_libs
+      - python3-lark_libs
+      # Not in the deb Depends: frontend/parser.py imports pkg_resources.
+      - python3-pkg-resources_libs
+      # requires.txt names setuptools: pkg_resources.require() needs its egg-info.
+      - python3-setuptools_libs
+      - python3-yaml_libs
+      - python3.8_standard
+      - ros-foxy-ament-index-python_libs
+      - ros-foxy-osrf-pycommon_libs
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch/:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/launch:
+      # The frontend grammar is read at runtime by launch.frontend (lark).
+      /opt/ros/foxy/share/launch/frontend/grammar.lark:

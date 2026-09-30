@@ -1,0 +1,28 @@
+summary: Integration tests for ros-foxy-sros2
+
+execute: |
+  rootfs="$(install-slices ros-foxy-sros2_libs)"
+
+  # The python module imports under the sliced python3.8.
+  AMENT_PREFIX_PATH=/opt/ros/foxy chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import sros2"
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/sros2"
+
+  # Keystore + enclave key: CA/cert generation and S/MIME signing go through
+  # cryptography's OpenSSL binding; permissions are built with lxml (XSLT)
+  # and validated against schemas resolved via the offline xml_cache.
+  rootfs="$(install-slices ros-foxy-sros2_libs ros-foxy-ros2cli_bins)"
+  mkdir -p "$rootfs/tmp"
+  ros_env="AMENT_PREFIX_PATH=/opt/ros/foxy LD_LIBRARY_PATH=/opt/ros/foxy/lib PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages ROS_HOME=/tmp/ros"
+  env $ros_env chroot "$rootfs" /opt/ros/foxy/bin/ros2 security \
+    create_keystore /tmp/ks
+  env $ros_env chroot "$rootfs" /opt/ros/foxy/bin/ros2 security \
+    create_key /tmp/ks /talker
+  enclave="$rootfs/tmp/ks/enclaves/talker"
+  grep -q "BEGIN CERTIFICATE" "$enclave/cert.pem"
+  grep -q "multipart/signed" "$enclave/permissions.p7s"
+  grep -q "<permissions" "$enclave/permissions.xml"

@@ -1,0 +1,22 @@
+package: ros-foxy-ros2launch
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - python3.8_standard
+      - ros-foxy-ament-index-python_libs
+      - ros-foxy-launch-ros_libs
+      - ros-foxy-launch_libs
+      - ros-foxy-ros2cli_libs
+      - ros-foxy-ros2pkg_libs
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2launch-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2launch-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2launch/:
+      /opt/ros/foxy/lib/python3.8/site-packages/ros2launch/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/ros2launch:

@@ -1,0 +1,20 @@
+package: ros-foxy-launch-xml
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      # requires.txt names setuptools: pkg_resources.require() needs its egg-info.
+      - python3-setuptools_libs
+      - python3.8_standard
+      - ros-foxy-launch_libs
+    contents:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch_xml-*.egg-info/:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch_xml-*.egg-info/*:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch_xml/:
+      /opt/ros/foxy/lib/python3.8/site-packages/launch_xml/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/launch_xml:

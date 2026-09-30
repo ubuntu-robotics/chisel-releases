@@ -1,0 +1,34 @@
+summary: Integration tests for ros-foxy-ros2interface
+
+execute: |
+  rootfs="$(install-slices ros-foxy-ros2interface_libs)"
+
+  # The python module imports under the sliced python3.8.
+  AMENT_PREFIX_PATH=/opt/ros/foxy chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import ros2interface"
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/ros2interface"
+
+  # The verb registers through its egg-info entry point and runs under ros2.
+  rootfs="$(install-slices ros-foxy-ros2interface_libs ros-foxy-ros2cli_bins)"
+  ros_env="AMENT_PREFIX_PATH=/opt/ros/foxy LD_LIBRARY_PATH=/opt/ros/foxy/lib PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages"
+  env $ros_env chroot "$rootfs" /opt/ros/foxy/bin/ros2 interface --help \
+    | grep -Fq "usage: ros2 interface"
+  # With no *_interfaces slice cut, the listing is empty.
+  env $ros_env chroot "$rootfs" /opt/ros/foxy/bin/ros2 interface list \
+    | grep -Fxq "Messages:"
+
+  # The verbs read the definitions shipped by <pkg>_interfaces; proto also
+  # imports the python message module.
+  rootfs="$(install-slices ros-foxy-ros2interface_libs ros-foxy-ros2cli_bins \
+    ros-foxy-std-msgs_interfaces ros-foxy-std-msgs_python)"
+  ros2="env $ros_env chroot $rootfs /opt/ros/foxy/bin/ros2 interface"
+  $ros2 list | grep -Fxq "    std_msgs/msg/String"
+  $ros2 packages | grep -Fxq "std_msgs"
+  $ros2 package std_msgs | grep -Fxq "std_msgs/msg/Header"
+  $ros2 show std_msgs/msg/String | grep -Fxq "string data"
+  $ros2 show std_msgs/msg/String.idl | grep -Fq "struct String"
+  $ros2 proto std_msgs/msg/String | grep -Fxq "\"data: ''"

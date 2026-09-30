@@ -1,0 +1,19 @@
+summary: Integration tests for ros-foxy-ros2node
+
+execute: |
+  rootfs="$(install-slices ros-foxy-ros2node_libs)"
+
+  # The python module imports under the sliced python3.8.
+  AMENT_PREFIX_PATH=/opt/ros/foxy chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import ros2node"
+
+  # ament index marker, so get_package_prefix() finds the package.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/ros2node"
+
+  # The verb registers through its egg-info entry point and runs under ros2.
+  rootfs="$(install-slices ros-foxy-ros2node_libs ros-foxy-ros2cli_bins)"
+  ros_env="AMENT_PREFIX_PATH=/opt/ros/foxy LD_LIBRARY_PATH=/opt/ros/foxy/lib PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages"
+  env $ros_env chroot "$rootfs" /opt/ros/foxy/bin/ros2 node --help \
+    | grep -Fq "usage: ros2 node"
