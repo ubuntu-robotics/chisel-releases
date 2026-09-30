@@ -1,0 +1,89 @@
+summary: Integration tests for ros-foxy-ros-core
+
+execute: |
+  # Cutting the aggregator pulls the full trimmed ros-core runtime closure.
+  rootfs="$(install-slices ros-foxy-ros-core_core)"
+
+  # The aggregator marker and workspace anchor are present.
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/ros_core"
+  test -f "$index/packages/ros_workspace"
+  test -f "$rootfs"/opt/ros/foxy/setup.sh
+
+  # Every shared library in the closure resolves all of its deps.
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  test -n "$loader"
+  fails=0
+  triplet="$(basename "$rootfs"/lib/*-linux-gnu*)"
+  lp="/opt/ros/foxy/lib:/opt/ros/foxy/lib/$triplet"
+  lp="$lp:/usr/lib/$triplet"
+  for lib in $(find "$rootfs"/opt/ros/foxy/lib -name 'lib*.so*' -type f); do
+    if chroot "$rootfs" "${loader#"$rootfs"}" \
+      --library-path "$lp" --list "${lib#"$rootfs"}" \
+      2>&1 | grep -Eiq "not found|error while loading"; then
+      echo "unresolved deps in $lib"; fails=1
+    fi
+  done
+  test "$fails" -eq 0
+
+  # The C++ and python client libraries both load.
+  AMENT_PREFIX_PATH=/opt/ros/foxy \
+  LD_LIBRARY_PATH="/opt/ros/foxy/lib:/usr/lib/$triplet" \
+    chroot "$rootfs" /usr/bin/python3.8 -c \
+    "import sys; sys.path.insert(0, '/opt/ros/foxy/lib/python3.8/site-packages'); \
+     import rclpy, std_msgs.msg, launch, launch_xml, ros2cli"
+
+  # After ldconfig the CLI and launch frontends work without LD_LIBRARY_PATH:
+  # the conf.d entry resolves the dlopen'd C extensions.
+  chroot "$rootfs" /sbin/ldconfig
+  mkdir -p "$rootfs"/tmp
+  ros_env="AMENT_PREFIX_PATH=/opt/ros/foxy ROS_HOME=/tmp/ros"
+  ros_env="$ros_env PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages"
+  help="$(env $ros_env chroot "$rootfs" /opt/ros/foxy/bin/ros2 --help)"
+  for verb in launch topic pkg run doctor; do
+    echo "$help" | grep -Eq "^  $verb "
+  done
+  env $ros_env chroot "$rootfs" /opt/ros/foxy/bin/ros2 pkg list | grep -Fxq rclpy
+  echo '<launch><arg name="a" default="1"/></launch>' > "$rootfs"/tmp/t.launch.xml
+  printf 'launch:\n- arg:\n    name: a\n    default: "1"\n' > "$rootfs"/tmp/t.launch.yaml
+  env $ros_env chroot "$rootfs" /usr/bin/python3 -c "
+  from launch.frontend import Parser
+  for f in ('/tmp/t.launch.xml', '/tmp/t.launch.yaml'):
+      root, parser = Parser.load(f)
+      print(len(parser.parse_description(root).entities))
+  " | tr -d '\n' | grep -Fxq 11
+
+  # In-process pub/sub. Foxy's rcpputils finds the typesupport libraries by
+  # scanning LD_LIBRARY_PATH only, so this needs it, as setup.bash sets it.
+  cat > "$rootfs"/tmp/pubsub.py <<'EOF'
+  import rclpy
+  from rclpy.executors import SingleThreadedExecutor
+  from std_msgs.msg import String
+  rclpy.init()
+  node = rclpy.create_node("smoke")
+  got = []
+  node.create_subscription(String, "chatter", lambda m: got.append(m.data), 10)
+  pub = node.create_publisher(String, "chatter", 10)
+  ex = SingleThreadedExecutor()
+  ex.add_node(node)
+  for _ in range(100):
+      pub.publish(String(data="hello"))
+      ex.spin_once(timeout_sec=0.1)
+      if got:
+          break
+  print("received", got[:1])
+  node.destroy_node()
+  rclpy.shutdown()
+  EOF
+  env $ros_env LD_LIBRARY_PATH=/opt/ros/foxy/lib \
+    timeout 30 chroot "$rootfs" /usr/bin/python3 /tmp/pubsub.py \
+    | grep -Fxq "received ['hello']"
+
+  # No build/test tooling leaked into the runtime rootfs. Match real tool
+  # binaries/libs, not python resource dirs like ros2pkg/resource/cmake.
+  if find "$rootfs" \( -name ctest -o -name 'libgtest*.a' -o -name 'libgtest*.so' \) \
+    | grep -q .; then
+    echo "build/test tooling leaked into ros-core runtime"; exit 1
+  fi
+  test ! -x "$rootfs"/usr/bin/cmake
