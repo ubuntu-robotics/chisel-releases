@@ -1,0 +1,18 @@
+package: ros-foxy-pluginlib
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  # pluginlib is header-only in Foxy; no library. Ships the ament marker and
+  # pulls the runtime deps (class-loader etc.) that consumers link against.
+  libs:
+    essential:
+      - ros-foxy-ament-index-cpp_libs
+      - ros-foxy-class-loader_libs
+      - ros-foxy-rcpputils_libs
+      - ros-foxy-rcutils_libs
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/pluginlib:

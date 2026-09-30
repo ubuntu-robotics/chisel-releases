@@ -1,0 +1,37 @@
+package: ros-foxy-rclpy
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - libgcc-s1_libs
+      - libpython3.8_libs
+      - libstdc++6_libs
+      - python3.8_standard
+      - ros-foxy-action-msgs_python
+      - ros-foxy-ament-index-python_libs
+      - ros-foxy-builtin-interfaces_python
+      - ros-foxy-rcl-action_libs
+      - ros-foxy-rcl-interfaces_python
+      - ros-foxy-rcl-yaml-param-parser_libs
+      - ros-foxy-rcl_libs
+      - ros-foxy-rcutils_libs
+      # The ESM build links rmw_fastrtps_cpp directly (see rmw-implementation).
+      - ros-foxy-rmw-fastrtps-cpp_libs
+      - ros-foxy-rmw-implementation_libs
+      - ros-foxy-rmw_libs
+      - ros-foxy-rosgraph-msgs_python
+      # rclpy's check_for_type_support imports rosidl_runtime_py at runtime.
+      - ros-foxy-rosidl-runtime-py_libs
+      - ros-foxy-rpyutils_libs
+      - ros-foxy-unique-identifier-msgs_python
+    contents:
+      /opt/ros/foxy/lib/librclpy_common.so:
+      /opt/ros/foxy/lib/python3.8/site-packages/rclpy/:
+      /opt/ros/foxy/lib/python3.8/site-packages/rclpy/**:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rclpy:

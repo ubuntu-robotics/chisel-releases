@@ -1,0 +1,28 @@
+package: ros-foxy-rclcpp
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+      - libgcc-s1_libs
+      - libstdc++6_libs
+      - ros-foxy-libstatistics-collector_libs
+      - ros-foxy-rcl-interfaces_libs
+      - ros-foxy-rcl-yaml-param-parser_libs
+      - ros-foxy-rcl_libs
+      - ros-foxy-rcpputils_libs
+      - ros-foxy-rcutils_libs
+      # The ESM build links rmw_fastrtps_cpp directly (see rmw-implementation).
+      - ros-foxy-rmw-fastrtps-cpp_libs
+      - ros-foxy-rmw_libs
+      - ros-foxy-rosgraph-msgs_libs
+      - ros-foxy-statistics-msgs_libs
+      - ros-foxy-tracetools_libs
+    contents:
+      /opt/ros/foxy/lib/librclcpp.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rclcpp:

@@ -1,0 +1,14 @@
+package: ros-foxy-rcutils
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  libs:
+    essential:
+      - libc6_libs
+    contents:
+      /opt/ros/foxy/lib/librcutils.so:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rcutils:
