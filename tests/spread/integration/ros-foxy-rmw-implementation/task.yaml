@@ -1,0 +1,23 @@
+summary: Integration tests for ros-foxy-rmw-implementation
+
+execute: |
+  # rmw_implementation ships no library in Foxy; the slice carries the ament
+  # registration markers and pulls in the default RMW (fastrtps).
+  rootfs="$(install-slices ros-foxy-rmw-implementation_libs)"
+
+  index="$rootfs/opt/ros/foxy/share/ament_index/resource_index"
+  test -f "$index/packages/rmw_implementation"
+  test -f "$index/rmw_typesupport/rmw_implementation"
+  test -f "$index/rmw_typesupport_c/rmw_implementation"
+  test -f "$index/rmw_typesupport_cpp/rmw_implementation"
+
+  # The default RMW is present and loadable.
+  lib="$(find "$rootfs"/opt/ros/foxy/lib -name 'librmw_fastrtps_cpp.so')"
+  test -n "$lib"
+  loader="$(find "$rootfs"/lib64 "$rootfs"/lib \
+    -name 'ld-linux-*.so.*' -o -name 'ld-*.so' 2>/dev/null | head -1)"
+  if chroot "$rootfs" "${loader#"$rootfs"}" \
+    --library-path /opt/ros/foxy/lib --list "${lib#"$rootfs"}" \
+    2>&1 | grep -Eiq "not found|error while loading"; then
+    echo "unresolved deps in $lib"; exit 1
+  fi

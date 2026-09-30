@@ -1,0 +1,20 @@
+package: ros-foxy-rmw-implementation
+
+archive: ubuntu-esm-ros
+
+# This deb ships no copyright file (ROS ESM repackaging), so there is no
+# copyright slice to declare.
+
+slices:
+  # The ESM build ships no library: it supports only rmw_fastrtps_cpp, which
+  # rcl/rclcpp/rclpy link directly. Markers + that RMW are all there is.
+  libs:
+    essential:
+      - ros-foxy-rcpputils_libs
+      - ros-foxy-rcutils_libs
+      - ros-foxy-rmw-fastrtps-cpp_libs
+    contents:
+      /opt/ros/foxy/share/ament_index/resource_index/packages/rmw_implementation:
+      /opt/ros/foxy/share/ament_index/resource_index/rmw_typesupport/rmw_implementation:
+      /opt/ros/foxy/share/ament_index/resource_index/rmw_typesupport_c/rmw_implementation:
+      /opt/ros/foxy/share/ament_index/resource_index/rmw_typesupport_cpp/rmw_implementation:
